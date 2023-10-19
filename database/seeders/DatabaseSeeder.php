@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Customer;
+use App\Models\LeadSource;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -28,5 +29,18 @@ class DatabaseSeeder extends Seeder
         Customer::factory()
             ->count(10)
             ->create();
+
+        $leadSources = [
+            'Website',
+            'Online Ad',
+            'Twitter',
+            'Webinar',
+            'Trade Show',
+            'Referral'
+        ];
+
+        foreach ($leadSources as $leadSource){
+            LeadSource::create(['name' => $leadSource]);
+        }
     }
 }
