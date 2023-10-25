@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use function Laravel\Prompts\select;
 
 class CustomerResource extends Resource
 {
@@ -37,6 +38,9 @@ class CustomerResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\Select::make('lead_source_id')
                     ->relationship('leadSource', 'name'),
+                Forms\Components\Select::make('tags')
+                    ->relationship('tags', 'name')
+                    ->multiple()
             ]);
     }
 
@@ -51,8 +55,10 @@ class CustomerResource extends Resource
                 Tables\Columns\TextColumn::make('first_name')
                     ->label('Name')
                     ->formatStateUsing( function ($record){
-                     return $record->first_name . " " . $record->last_name;
+                        $tagsList = view('customer.tagList',['tags' => $record->tags])->render();
+                        return $record->first_name . " " . $record->last_name . " " . $tagsList;
                     })
+                    ->html()
                     ->searchable(['first_name', 'last_name']),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
