@@ -5,9 +5,11 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Customer;
 use App\Models\LeadSource;
+use App\Models\PipelineStage;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use phpDocumentor\Reflection\Types\True_;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,20 +18,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
         User::factory()->create([
             'name' => 'Test Admin',
             'email' => "admin@admin.com"
         ]);
-
-        Customer::factory()
-            ->count(10)
-            ->create();
 
         $leadSources = [
             'Website',
@@ -51,5 +43,41 @@ class DatabaseSeeder extends Seeder
         foreach($tags as $tag) {
             Tag::create(['name' => $tag]);
         }
+
+        $pipelineStages = [
+            [
+                'name' => 'Lead',
+                'position' => 1,
+                'is_default' => true
+            ],
+            [
+                'name' => 'Contact Made',
+                'position' => 2,
+                'is_default' => false
+            ],
+            [
+                'name' => 'Proposal Made',
+                'position' => 3,
+                'is_default' => false
+            ],
+            [
+                'name' => 'Proposal Rejected',
+                'position' => 4,
+                'is_default' => false
+            ],
+            [
+                'name' => 'Customer',
+                'position' => 5,
+                'is_default' => false
+            ]
+        ];
+
+        foreach($pipelineStages as $pipelineStage){
+            PipelineStage::create($pipelineStage);
+        }
+        $defaultPipelineStage = PipelineStage::where('is_default', true)->first()->id;
+        Customer::factory()->count('10')->create([
+            'pipeline_stage_id' => $defaultPipelineStage,
+        ]);
     }
 }
